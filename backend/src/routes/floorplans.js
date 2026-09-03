@@ -1,9 +1,10 @@
 const express = require('express');
-const path = require('path');
 const upload = require('../middleware/upload');
 const { analyzeFloorPlan } = require('../services/floorPlanAnalyzer');
+const { resolveSafePath } = require('../utils/safePath');
 const projectModel = require('../models/projectModel');
 const floorplanModel = require('../models/floorplanModel');
+const config = require('../config');
 
 const router = express.Router();
 
@@ -22,11 +23,13 @@ router.post('/upload', upload.single('floorplan'), (req, res) => {
   }
 
   try {
-    const analysis = analyzeFloorPlan(req.file.path, req.file.originalname);
+    const storedFileName = req.file.filename;
+    const safeFilePath = resolveSafePath(config.uploadDir, storedFileName);
+    const analysis = analyzeFloorPlan(safeFilePath, req.file.originalname);
     const floorplan = floorplanModel.createFloorplan({
       projectId,
       fileName: req.file.originalname,
-      filePath: path.basename(req.file.path),
+      filePath: storedFileName,
       mediaType: analysis.mediaType,
       analysis,
     });
@@ -35,6 +38,7 @@ router.post('/upload', upload.single('floorplan'), (req, res) => {
     return res.status(422).json({ error: `Failed to analyze floor plan: ${err.message}` });
   }
 });
+
 
 router.get('/:id', (req, res) => {
   const floorplan = floorplanModel.getFloorplan(req.params.id);
