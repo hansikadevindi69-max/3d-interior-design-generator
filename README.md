@@ -27,7 +27,23 @@ docs/       Additional documentation (API reference)
 
 ## Getting started
 
-### Backend
+> **Important:** these commands must be run **on your own computer** (or a
+> dev environment like GitHub Codespaces), not inside a remote AI sandbox.
+> `http://localhost:...` only works in a browser running on the *same
+> machine* as the server.
+
+### Quickstart (recommended - runs both servers with one command)
+
+```bash
+npm run setup   # installs backend + frontend dependencies
+npm run dev      # starts the API (port 4000) and the UI (port 5173) together
+```
+
+Then open **http://localhost:5173** in your browser.
+
+### Running each part separately
+
+#### Backend
 
 ```bash
 cd backend
@@ -37,7 +53,7 @@ npm test                # run the test suite
 npm start                # start the API on http://localhost:4000
 ```
 
-### Frontend
+#### Frontend
 
 ```bash
 cd frontend
